@@ -6,10 +6,10 @@ from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import spsolve
 from scipy.constants import g
+from scipy.constants import pi
 
-from scipy import sparse
+from math import sin
 
-np.set_printoptions(linewidth=2000)
 
 class Stupebrett:
     def __init__(self, L, w, d, p, E, force_func=None):
@@ -68,7 +68,7 @@ class Stupebrett:
         """
         b = np.empty(n)
 
-        h = self.L / n                    # lengden på ett segment på brettet
+        h = self.L / n  # lengden på ett segment på brettet
         f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
 
         for i in range(n):
@@ -76,7 +76,7 @@ class Stupebrett:
 
         return b * (h ** 4 / (self.E * self.I))
 
-    def solve(self, n):
+    def finn_y(self, n):
         """ Finner forflytniningsvektor for brettet når man betrakter det som n segmenter.
         Funksjonen tar i betraktning både egenvekt og evt. ekstra vekt fra force_func.
         :param n: Antall segmenter
@@ -92,7 +92,11 @@ class Stupebrett:
 
         return y
 
-    def correct_displacement(self, n):
+    def fasit_y(self, n):
+        """ Gir fasit-svar for forflytningsvektor når man har kun egenvekt av stupebrettet
+        :param n: Antall segmenter stupebrettet skal deles opp i
+        :return: Forflytningsvektoren y
+        """
         b = np.empty(n + 1)
 
         h = self.L / n
@@ -100,7 +104,26 @@ class Stupebrett:
 
         for i in range(n + 1):
             x = i * h
-            b[i] = (f/(24 * self.E * self.I)) * x**2 * (x ** 2 - 4 * self.L * x + 6 * self.L**2)
+            b[i] = (f / (24 * self.E * self.I)) * x ** 2 * (x ** 2 - 4 * self.L * x + 6 * self.L ** 2)
 
         return b
 
+    def fasit_y_medlast(self, n):
+        """ Gir fasit-svar for forflytningsvektor når man har egenvekt av brettet OG en sinusformet haug.
+        :param n: Antall segmenter stupebrettet skal deles opp i
+        :return: Forflytningsvektoren y
+        """
+
+        y1 = self.fasit_y(n)  # forflytning pga egenvekt
+        y2 = np.empty(n + 1)  # forflytning pga haugen... fylles inn senere
+
+        p2 = 100  # kg/m^3 på haugen
+
+        h = self.L / n
+        for i in range(n + 1):
+            x = i * h
+            y2[i] = (self.L ** 3 / pi ** 3) * sin(pi * x / self.L) - \
+                x ** 3 / 6 + self.L * x ** 2 / 2 - self.L ** 2 * x / pi ** 2
+        y2 *= (-g * p2 * self.L) / (self.E * self.I * pi)
+
+        return y1 + y2  # total forflytning

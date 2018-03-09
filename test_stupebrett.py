@@ -16,7 +16,7 @@ p = 1
 E = 1
 I = w * d ** 3 / 12
 
-brett = Stupebrett(1, 1, 1, 1, 1)
+brett = Stupebrett(1, 1, 1, 1, 1)  #  Et meget enkelt stupebrett
 
 
 # Sjekker at et ideelt stupebrett på 1x1x1 og alle konstanter satt til 1 gir forventet b-vektor.
@@ -101,5 +101,5 @@ def test_init():
 
 # Sjekker at løsning blir ca. lik fasit.
 def test_solve_vs_correct():
-    assert np.isclose(brett.solve(10), brett.correct_displacement(10)).all()
-    assert np.isclose(brett.solve(20), brett.correct_displacement(20)).all()
+    assert np.isclose(brett.finn_y(10), brett.fasit_y(10)).all()
+    assert np.isclose(brett.finn_y(20), brett.fasit_y(20)).all()
