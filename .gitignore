@@ -61,6 +61,9 @@ fabric.properties
 
 .idea/
 
+# ignore iml file too
+*.iml
+
 ### Linux ###
 *~
 
@@ -77,7 +80,7 @@ fabric.properties
 .nfs*
 
 ### Python ###
-# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimzed / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
