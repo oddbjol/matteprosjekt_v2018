@@ -124,7 +124,6 @@ class Stupebrett:
 
         return y1 + y2  # total forflytning
 
-    # todo: test metoden.
     @staticmethod
     def kraft_av_haug(x, L, n):
         """ Gir ut kraften som en sinusformet haug virker med på stupebrettet, ved distanse x fra festepuntket/veggen
