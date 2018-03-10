@@ -88,7 +88,10 @@ def test_init():
     E = 1
     I = w * d ** 3 / 12
 
-    brett2 = Stupebrett(L, w, d, p, E, lambda x: x * 3)
+    def f(x):
+        pass
+
+    brett2 = Stupebrett(L, w, d, p, E, f)
 
     assert brett2.L == L
     assert brett2.w == w
@@ -96,7 +99,7 @@ def test_init():
     assert brett2.p == p
     assert brett2.E == E
     assert brett2.I == I
-    assert brett2.force_func(1) == 3
+    assert brett2.force_func == f
 
 
 # Sjekker at løsning blir ca. lik fasit.

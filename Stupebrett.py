@@ -20,7 +20,7 @@ class Stupebrett:
         :param d: Tykkelse på stupebrettet (meter)
         :param p: Massetetthet på stupebrettet (kg/m^3)
         :param E: Young-modulus på stupebrettet (Pascals som er N / m^2)
-        :param force_func: En funksjon av x som gir ut evt. ekstra kraft som trykker ned på brettet.
+        :param force_func: En funksjon av (x,L) som gir ut evt. ekstra kraft som trykker ned på brettet.
                            Denne kan sløyfes, da tas det kun hensyn til vekten av brettet. 
         """
         self.L = L
@@ -31,7 +31,7 @@ class Stupebrett:
         self.I = w * d ** 3 / 12
 
         if force_func is None:
-            self.force_func = lambda x: 0  # Hvis det ikke er spesifisert en tilleggskraft, blir denne alltid 0.
+            self.force_func = lambda x, L, n: 0  # Hvis det ikke er spesifisert en tilleggskraft, blir denne alltid 0.
         else:
             self.force_func = force_func
 
@@ -55,13 +55,13 @@ class Stupebrett:
         return A
 
     def lagB(self, n):
-        """ Regner ut vektoren med krefter som trykker ned på brettet, ganger (h ** 4 / (self.E * self.I))
+        """ Regner ut forflytningsvektoren som brukes for å løse Euler-Bernoulli ligningssystemet.
         
-        Dette er en forflytningsvektor som brukes for å løse Euler-Bernoulli ligningssystemet.
+        Hver komponent er kraften som trykker ned på brettet i dette punktet, ganger (h ** 4 / (E * I))
         
         Dersom det er spesifisert en kraftfunksjon for tilleggskraft i konstruktør, tas denne også med i beregningen.
         Hvis ikke blir det kun vekten av selve brettet.
-        Komponent 0 i vektoren tilhører segment 0, osv.
+        Komponent 0 i vektoren tilhører på venstresiden av segment 0, osv.
         
         :param n: Antall segmenter brettet skal deles opp i
         :return: forflytningsvektoren b, med en komponent per segment på brettet.
@@ -72,7 +72,7 @@ class Stupebrett:
         f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
 
         for i in range(n):
-            b[i] = f + self.force_func(i * h)  # Her legger vi til evt. tilleggskraft på brettet
+            b[i] = f + self.force_func(i * h, self.L, n)  # Her legger vi til evt. tilleggskraft på brettet
 
         return b * (h ** 4 / (self.E * self.I))
 
@@ -127,3 +127,43 @@ class Stupebrett:
         y2 *= (-g * p2 * self.L) / (self.E * self.I * pi)
 
         return y1 + y2  # total forflytning
+
+    # todo: test metoden.
+    @staticmethod
+    def kraft_av_haug(x, L, n):
+        """ Gir ut kraften som en sinusformet haug virker med på stupebrettet, ved distanse x fra festepuntket/veggen
+        Denne kan brukes som inndata når brettet opprettes.
+        
+        :param x: Kraften beregnes for x meter ut på brettet
+        :param L: Lengde på brettet
+        :param n: Antall segmenter som brettet deles opp i. Brukes ikke.
+        :return: kraft som haugen utøver på brettet ved punktet x, i Newtons.
+        """
+
+        p = 100  # massetetthet på haugen. kg / m^3
+
+        return -p * g * sin(pi/L * x)
+
+    # todo: test metoden.
+    @staticmethod
+    def kraft_av_person(x, L, n):
+        """ Gir ut kraften som en person som står ytterst på brettet, 
+            virker med på brettet ved distanse x fra festepunktet/veggen
+            
+            Dette gjelder for en person som er 30cm bred, og som veier 50kg.
+        
+        :param x: Kraften beregnes for x meter ut på brettet
+        :param L: Lengde på brettet
+        :param n: Antall segmenter som brettet deles opp i. Få segmenter betyr mye kraft per segment.
+        :return: kraft som personen utøver på brettet ved punktet x, i Newtons.
+        """
+
+        person_vekt = 50       # kg
+        person_bredde = 0.3    # m
+
+        h = L / n
+
+        if (L - person_bredde) <= x <= L:  # x er under personen, så vi hensyntar personens vekt
+            return -g * (person_vekt / person_bredde) * h # Kraft personen utøver per meter, ganger segmentlengden.
+        else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
+            return 0
