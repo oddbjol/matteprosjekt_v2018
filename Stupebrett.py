@@ -20,7 +20,6 @@ class Stupebrett:
         :param d: Tykkelse på stupebrettet (meter)
         :param p: Massetetthet på stupebrettet (kg/m^3)
         :param E: Young-modulus på stupebrettet (Pascals som er N / m^2)
-        :param force_func: 
         """
         self.L = L
         self.w = w
