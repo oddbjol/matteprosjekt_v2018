@@ -12,7 +12,7 @@ from math import sin
 
 
 class Stupebrett:
-    def __init__(self, L, w, d, p, E, force_func=None):
+    def __init__(self, L, w, d, p, E):
         """ Opprett et nytt stupebrett.
         
         :param L: Lengden på stupebrettet (meter)
@@ -20,8 +20,7 @@ class Stupebrett:
         :param d: Tykkelse på stupebrettet (meter)
         :param p: Massetetthet på stupebrettet (kg/m^3)
         :param E: Young-modulus på stupebrettet (Pascals som er N / m^2)
-        :param force_func: En funksjon av (x,L) som gir ut evt. ekstra kraft som trykker ned på brettet.
-                           Denne kan sløyfes, da tas det kun hensyn til vekten av brettet. 
+        :param force_func: 
         """
         self.L = L
         self.w = w
@@ -29,11 +28,6 @@ class Stupebrett:
         self.p = p
         self.E = E
         self.I = w * d ** 3 / 12
-
-        if force_func is None:
-            self.force_func = lambda x, L, n: 0  # Hvis det ikke er spesifisert en tilleggskraft, blir denne alltid 0.
-        else:
-            self.force_func = force_func
 
     def lagA(self, n):
         """ Lager en nxn koeffisientmatrise for å finne løsning (vertikal forflytning) for Euler-Bernolibjelken
@@ -54,7 +48,7 @@ class Stupebrett:
         A[n - 1, n - 4:n] = B[2, :]
         return A
 
-    def lagB(self, n):
+    def lagB(self, n, force_func=None):
         """ Regner ut forflytningsvektoren som brukes for å løse Euler-Bernoulli ligningssystemet.
         
         Hver komponent er kraften som trykker ned på brettet i dette punktet, ganger (h ** 4 / (E * I))
@@ -64,29 +58,31 @@ class Stupebrett:
         Komponent 0 i vektoren tilhører på venstresiden av segment 0, osv.
         
         :param n: Antall segmenter brettet skal deles opp i
+        :param force_func: En funksjon av (x, L, n) som gir ut evt. ekstra kraft som trykker ned på brettet.
+                           Denne kan sløyfes, da tas det kun hensyn til vekten av brettet.
         :return: forflytningsvektoren b, med en komponent per segment på brettet.
         """
-        b = np.empty(n)
 
         h = self.L / n  # lengden på ett segment på brettet
         f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
+        b = np.ones(n) * f
 
-        for i in range(n):
-            b[i] = f + self.force_func(i * h, self.L, n)  # Her legger vi til evt. tilleggskraft på brettet
+        if force_func is not None:
+            for i in range(n):
+                b[i] = f + force_func(i * h, self.L, n)  # Her legger vi til evt. tilleggskraft på brettet
 
         return b * (h ** 4 / (self.E * self.I))
 
-    def finn_y(self, n):
+    def finn_y(self, n, force_func=None):
         """ Finner forflytniningsvektor for brettet når man betrakter det som n segmenter.
         Funksjonen tar i betraktning både egenvekt og evt. ekstra vekt fra force_func.
+        :param force_func: En funksjon av (x, L, n) som gir ut evt. ekstra kraft som trykker ned på brettet.
+                           Denne kan sløyfes, da tas det kun hensyn til vekten av brettet. 
         :param n: Antall segmenter
         :return: Forflytningsvektoren y
         """
 
-        A = self.lagA(n)
-        b = self.lagB(n)
-
-        y = spsolve(self.lagA(n), self.lagB(n))
+        y = spsolve(self.lagA(n), self.lagB(n, force_func))
 
         y = np.r_[0, y]  # b-vektoren inneholder kun y1, y2, ..., yn. Ta med y0, som alltid er 0, manuelt.
 
@@ -108,7 +104,7 @@ class Stupebrett:
 
         return b
 
-    def fasit_y_medlast(self, n):
+    def fasit_y_medhaug(self, n):
         """ Gir fasit-svar for forflytningsvektor når man har egenvekt av brettet OG en sinusformet haug.
         :param n: Antall segmenter stupebrettet skal deles opp i
         :return: Forflytningsvektoren y

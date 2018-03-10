@@ -1,5 +1,5 @@
 # OBSOBSOBS:
-# For å bruke denne unittest-fila, installer først pytest med pip og kjør deretter pytest i terminal.
+# For å bruke denne unittest-fila, installer først pytest med pip og kjør deretter pytest i terminal:
 #
 # pip3 install pytest
 # pytest -v
@@ -16,7 +16,7 @@ p = 1
 E = 1
 I = w * d ** 3 / 12
 
-brett = Stupebrett(1, 1, 1, 1, 1)  #  Et meget enkelt stupebrett
+brett = Stupebrett(1, 1, 1, 1, 1)  # Et meget enkelt stupebrett
 
 
 # Sjekker at et ideelt stupebrett på 1x1x1 og alle konstanter satt til 1 gir forventet b-vektor.
@@ -91,7 +91,7 @@ def test_init():
     def f(x):
         pass
 
-    brett2 = Stupebrett(L, w, d, p, E, f)
+    brett2 = Stupebrett(L, w, d, p, E)
 
     assert brett2.L == L
     assert brett2.w == w
@@ -99,10 +99,13 @@ def test_init():
     assert brett2.p == p
     assert brett2.E == E
     assert brett2.I == I
-    assert brett2.force_func == f
 
 
 # Sjekker at løsning blir ca. lik fasit.
-def test_solve_vs_correct():
-    assert np.isclose(brett.finn_y(10), brett.fasit_y(10)).all()
+def test_finn_y_vs_fasit():
     assert np.isclose(brett.finn_y(20), brett.fasit_y(20)).all()
+
+
+# Sjekker at løsning blir ca. lik fasit. todo: denne feiler. kan være bug, kan være "forventede" feil i utregninga.
+def test_finn_y_med_haug_vs_fasit():
+    assert np.isclose(brett.finn_y(20, Stupebrett.kraft_av_haug), brett.fasit_y_medhaug(20)).all()
