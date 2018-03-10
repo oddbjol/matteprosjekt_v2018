@@ -45,7 +45,8 @@ class Stupebrett:
         A[0, 0: 4] = B[0, :]
         A[n - 2, n - 4:n] = B[1, :]
         A[n - 1, n - 4:n] = B[2, :]
-        return A
+        #  Radbasert komprimert sparse matrix for bedre ytelse ved matrise-vektor-produkt
+        return A.tocsr()
 
     def lagB(self, n, force_func=None):
         """ Regner ut forflytningsvektoren som brukes for å løse Euler-Bernoulli ligningssystemet.
