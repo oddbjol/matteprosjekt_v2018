@@ -1,9 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-
 from Stupebrett import Stupebrett
+
 
 brett = Stupebrett(L=2, w=0.3, d=0.03, p=480, E=1.3*10**10)
 
@@ -16,16 +14,13 @@ def utregning():
 
         feil_i_L = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
         #print(i, feil_i_L)
-        plt.plot(feil_i_L, color='blue')
-        #plt.plot(brett.fasit_y(n))
-        plt.plot(brett.lagA(n), color='red')
+
+    for i in range(12 - 1):
+
+        print("i :", i, "\t", feil_i_L)
+
+        plt.plot(i, feil_i_L, color='blue')
+        #plt.plot(i, brett.lagA(n), color='red')
         plt.show()
-
-    print("ferdig", "20.... 10 * 2^11 oppnåd")
-
-
-utregning()
-
-
 
 
