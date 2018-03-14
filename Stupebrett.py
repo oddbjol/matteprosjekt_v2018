@@ -10,7 +10,6 @@ from scipy.constants import pi
 
 from math import sin
 
-
 class Stupebrett:
     def __init__(self, L, w, d, p, E):
         """ Opprett et nytt stupebrett.
@@ -34,6 +33,7 @@ class Stupebrett:
         :param n: Dimensjon på matrisen
         :return: Koeffisientmatrisen
         """
+        #e = vektor med mange en tall
         e = sp.ones(n)
         A = spdiags([e, -4 * e, 6 * e, -4 * e, e], [-2, -1, 0, 1, 2], n, n)
         A = lil_matrix(A)
@@ -127,7 +127,7 @@ class Stupebrett:
     @staticmethod
     def kraft_av_haug(x, L, n):
         """ Gir ut kraften som en sinusformet haug virker med på stupebrettet, ved distanse x fra festepuntket/veggen
-        Denne kan brukes som inndata når brettet opprettes.
+        Denne kan brukes som inndata når brettet opprettes. Viser kraft på bestemt punkt
         
         :param x: Kraften beregnes for x meter ut på brettet
         :param L: Lengde på brettet
