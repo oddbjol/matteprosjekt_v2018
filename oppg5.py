@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 
@@ -15,12 +15,13 @@ def utregning():
         n = 20 * (2**i)
 
         feil_i_L = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
-        print(i, feil_i_L)
-
+        #print(i, feil_i_L)
+        plt.plot(feil_i_L, color='blue')
+        #plt.plot(brett.fasit_y(n))
+        plt.plot(brett.lagA(n), color='red')
+        plt.show()
 
     print("ferdig", "20.... 10 * 2^11 oppnåd")
-
-
 
 
 utregning()
