@@ -15,7 +15,7 @@ def utregning():
         n = 20 * (2**i)
 
         feil_i_L = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
-        #print(i, feil_i_L)
+        print(i, feil_i_L)
 
 
     print("ferdig", "20.... 10 * 2^11 oppnåd")
@@ -24,6 +24,7 @@ def utregning():
 
 
 utregning()
+
 
 
 
