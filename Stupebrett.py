@@ -1,3 +1,4 @@
+# coding=utf-8
 import scipy as sp
 import numpy as np
 
@@ -12,7 +13,7 @@ from math import sin
 
 
 class Stupebrett:
-    def __init__(self, L, w, d, p, E):
+    def __init__(self, L=2, w=0.3, d=0.03, p=480, E=1.3*10**10):
         """ Opprett et nytt stupebrett.
         
         :param L: Lengden på stupebrettet (meter)
