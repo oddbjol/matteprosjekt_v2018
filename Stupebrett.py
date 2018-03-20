@@ -56,7 +56,7 @@ class Stupebrett:
         
         Dersom det er spesifisert en kraftfunksjon for tilleggskraft i konstruktør, tas denne også med i beregningen.
         Hvis ikke blir det kun vekten av selve brettet.
-        Komponent 0 i vektoren tilhører på venstresiden av segment 0, osv.
+        Komponent 0 i vektoren tilhører på høyresiden av segment 0, osv.
         
         :param n: Antall segmenter brettet skal deles opp i
         :param force_func: En funksjon av (x, L, n) som gir ut evt. ekstra kraft som trykker ned på brettet.
@@ -70,7 +70,7 @@ class Stupebrett:
 
         if force_func is not None:
             for i in range(n):
-                b[i] = f + force_func(i * h, self.L, n)  # Her legger vi til evt. tilleggskraft på brettet
+                b[i] = f + force_func((i+1) * h, self.L, n)  # Her legger vi til evt. tilleggskraft på brettet
 
         return b * (h ** 4 / (self.E * self.I))
 
@@ -85,8 +85,6 @@ class Stupebrett:
 
         y = spsolve(self.lagA(n), self.lagB(n, force_func))
 
-        y = np.r_[0, y]  # b-vektoren inneholder kun y1, y2, ..., yn. Ta med y0, som alltid er 0, manuelt.
-
         return y
 
     def fasit_y(self, n):
@@ -94,13 +92,13 @@ class Stupebrett:
         :param n: Antall segmenter stupebrettet skal deles opp i
         :return: Forflytningsvektoren y
         """
-        b = np.empty(n + 1)
+        b = np.empty(n)
 
         h = self.L / n
         f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
 
-        for i in range(n + 1):
-            x = i * h
+        for i in range(n):
+            x = (i+1) * h
             b[i] = (f / (24 * self.E * self.I)) * x ** 2 * (x ** 2 - 4 * self.L * x + 6 * self.L ** 2)
 
         return b
@@ -112,13 +110,13 @@ class Stupebrett:
         """
 
         y1 = self.fasit_y(n)  # forflytning pga egenvekt
-        y2 = np.empty(n + 1)  # forflytning pga haugen... fylles inn senere
+        y2 = np.empty(n)  # forflytning pga haugen... fylles inn senere
 
         p2 = 100  # kg/m^3 på haugen
 
         h = self.L / n
-        for i in range(n + 1):
-            x = i * h
+        for i in range(n):
+            x = (i+1) * h
             y2[i] = (self.L ** 3 / pi ** 3) * sin(pi * x / self.L) - \
                 x ** 3 / 6 + self.L * x ** 2 / 2 - self.L ** 2 * x / pi ** 2
         y2 *= (-g * p2 * self.L) / (self.E * self.I * pi)
@@ -163,3 +161,4 @@ class Stupebrett:
             return -g * (person_vekt / person_bredde) * h # Kraft personen utøver per meter, ganger segmentlengden.
         else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
             return 0
+
