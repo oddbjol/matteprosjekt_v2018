@@ -20,7 +20,8 @@ def main():
     print("Yx fourthDerivative: ", Yx_fourthDerivative)
 
 
-
+    #b_vector = stupebrett.lagB(n)
+    #print("The b-vector: ", b_vector)
 
 
 
