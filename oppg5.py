@@ -1,26 +1,32 @@
+from Stupebrett import Stupebrett
 import numpy as np
 import matplotlib.pyplot as plt
-from Stupebrett import Stupebrett
 
 
-brett = Stupebrett(L=2, w=0.3, d=0.03, p=480, E=1.3*10**10)
 
+def main():
 
-def utregning():
+    brett = Stupebrett()
+
+    feil_i_L = np.zeros(12)
+    x = np.zeros(12)
+    laga = np.zeros(12)
 
     for i in range(0, 12):
-
         n = 20 * (2**i)
 
-        feil_i_L = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
-        #print(i, feil_i_L)
+        x[i] = n
+        feil_i_L[i] = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
+        laga = brett.lagA(i)
+        # print(i, feil_i_L)
 
-    for i in range(12 - 1):
+    for i in range(11 + 1):
+        print(x[i], "\t", feil_i_L, "\t", brett.lagA(x))
 
-        print("i :", i, "\t", feil_i_L)
-
-        plt.plot(i, feil_i_L, color='blue')
-        #plt.plot(i, brett.lagA(n), color='red')
-        plt.show()
+    plt.plot(x, feil_i_L, color='blue')
+    plt.plot(x, laga, color='red')
+    plt.show()
 
 
+if __name__ == '__main__':
+    main()
