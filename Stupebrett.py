@@ -9,6 +9,9 @@ from scipy.sparse.linalg import spsolve
 from scipy.constants import g
 from scipy.constants import pi
 
+from numpy.linalg import cond
+EPS = np.finfo(np.float).eps
+
 from math import sin
 
 class Stupebrett:
@@ -26,7 +29,7 @@ class Stupebrett:
         self.d = d
         self.p = p
         self.E = E
-        self.I = w * d ** 3 / 12
+        self.I = (w * d ** 3) / 12
 
     def lagA(self, n):
         """ Lager en nxn koeffisientmatrise for å finne løsning (vertikal forflytning) for Euler-Bernolibjelken
@@ -65,7 +68,7 @@ class Stupebrett:
         """
 
         h = self.L / n  # lengden på ett segment på brettet
-        f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
+        f = self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
         b = np.ones(n) * f
 
         if force_func is not None:
@@ -92,10 +95,10 @@ class Stupebrett:
         :param n: Antall segmenter stupebrettet skal deles opp i
         :return: Forflytningsvektoren y
         """
-        b = np.empty(n)
+        b = np.zeros(n)
 
         h = self.L / n
-        f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
+        f = self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
 
         for i in range(n):
             x = (i+1) * h
@@ -110,7 +113,7 @@ class Stupebrett:
         """
 
         y1 = self.fasit_y(n)  # forflytning pga egenvekt
-        y2 = np.empty(n)  # forflytning pga haugen... fylles inn senere
+        y2 = np.zeros(n)  # forflytning pga haugen... fylles inn senere
 
         p2 = 100  # kg/m^3 på haugen
 
@@ -161,4 +164,42 @@ class Stupebrett:
             return -g * (person_vekt / person_bredde) * h # Kraft personen utøver per meter, ganger segmentlengden.
         else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
             return 0
+
+    def generer_info_om_losning(self, n_range, force_func=None, fasit_func=None):
+
+        n_len = len(n_range)
+
+        x = np.zeros(n_len)
+        numerisk_svar = np.zeros(n_len)
+        kondA = np.zeros(n_len)
+        teoretisk_feil = np.zeros(n_len)
+
+        MAX_COND = 1000
+        first_over_max = None
+        first_over_max_set = True
+
+        for i in n_len:
+            n = n_range[i]
+
+            x[i] = n
+            numerisk_svar[i] = self.finn_y(n, force_func)[-1]
+
+            A = self.lagA(n)
+
+            if n < MAX_COND:
+                kondA[i] = cond(A.toarray())
+            elif first_over_max_set:
+                first_over_max_set = False
+                first_over_max = i
+
+
+
+            teoretisk_feil[i] = self.L**2 / n**2
+
+        # Vi "ekstrapolerer" de høyeste verdiene av kondA basert på de forrige.
+        mult = kondA[MAX_COND-1] / kondA[MAX_COND-2]
+        for i in range(MAX_COND, 11+1):
+            kondA[i] = kondA[i-1] * mult
+
+        return x, numerisk_svar, kondA*EPS, teoretisk_feil
 
