@@ -20,8 +20,8 @@ def main():
     kondA = np.zeros(12)
     teoretisk_feil = np.zeros(12)
 
-    for i in range(11 + 1):
-        n = 20 * 2**i
+    for i in range(1, 11 + 1):
+        n = 10 * 2**i
 
         x[i] = n
         numerisk_svar[i] = brett.finn_y(n, Stupebrett.kraft_av_haug)[-1]
@@ -60,6 +60,8 @@ def main():
     plt.loglog(x, teoretisk_feil, marker='o', markersize=4, label='Teoretisk feil', basex=2)
     plt.loglog(x, np.abs(teoretisk_feil+(kondA*EPS))*1.5, marker='o', markersize=4, label='Kond(A)*EPS + Teoretisk_Feil', basex=2)
 
+    plt.xlabel("n")
+    plt.ylabel("feil (meter)")
     plt.legend()
     plt.show()
 
