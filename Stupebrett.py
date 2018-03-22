@@ -161,45 +161,6 @@ class Stupebrett:
         h = L / n
 
         if (L - person_bredde) <= x <= L:  # x er under personen, så vi hensyntar personens vekt
-            return -g * (person_vekt / person_bredde) * h # Kraft personen utøver per meter, ganger segmentlengden.
+            return -g * (person_vekt / person_bredde)  # Kraft personen utøver per meter.
         else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
             return 0
-
-    def generer_info_om_losning(self, n_range, force_func=None, fasit_func=None):
-
-        n_len = len(n_range)
-
-        x = np.zeros(n_len)
-        numerisk_svar = np.zeros(n_len)
-        kondA = np.zeros(n_len)
-        teoretisk_feil = np.zeros(n_len)
-
-        MAX_COND = 1000
-        first_over_max = None
-        first_over_max_set = True
-
-        for i in n_len:
-            n = n_range[i]
-
-            x[i] = n
-            numerisk_svar[i] = self.finn_y(n, force_func)[-1]
-
-            A = self.lagA(n)
-
-            if n < MAX_COND:
-                kondA[i] = cond(A.toarray())
-            elif first_over_max_set:
-                first_over_max_set = False
-                first_over_max = i
-
-
-
-            teoretisk_feil[i] = self.L**2 / n**2
-
-        # Vi "ekstrapolerer" de høyeste verdiene av kondA basert på de forrige.
-        mult = kondA[MAX_COND-1] / kondA[MAX_COND-2]
-        for i in range(MAX_COND, 11+1):
-            kondA[i] = kondA[i-1] * mult
-
-        return x, numerisk_svar, kondA*EPS, teoretisk_feil
-
