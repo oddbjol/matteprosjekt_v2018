@@ -9,6 +9,9 @@ from scipy.sparse.linalg import spsolve
 from scipy.constants import g
 from scipy.constants import pi
 
+from numpy.linalg import cond
+EPS = np.finfo(np.float).eps
+
 from math import sin
 
 class Stupebrett:
@@ -26,7 +29,7 @@ class Stupebrett:
         self.d = d
         self.p = p
         self.E = E
-        self.I = w * d ** 3 / 12
+        self.I = (w * d ** 3) / 12
 
     def lagA(self, n):
         """ Lager en nxn koeffisientmatrise for å finne løsning (vertikal forflytning) for Euler-Bernolibjelken
@@ -65,7 +68,7 @@ class Stupebrett:
         """
 
         h = self.L / n  # lengden på ett segment på brettet
-        f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
+        f = self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
         b = np.ones(n) * f
 
         if force_func is not None:
@@ -92,10 +95,10 @@ class Stupebrett:
         :param n: Antall segmenter stupebrettet skal deles opp i
         :return: Forflytningsvektoren y
         """
-        b = np.empty(n)
+        b = np.zeros(n)
 
         h = self.L / n
-        f = h * self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
+        f = self.w * self.d * self.p * -g  # kraften som trykker ned på hvert segment pga vekta på brettet.
 
         for i in range(n):
             x = (i+1) * h
@@ -110,7 +113,7 @@ class Stupebrett:
         """
 
         y1 = self.fasit_y(n)  # forflytning pga egenvekt
-        y2 = np.empty(n)  # forflytning pga haugen... fylles inn senere
+        y2 = np.zeros(n)  # forflytning pga haugen... fylles inn senere
 
         p2 = 100  # kg/m^3 på haugen
 
@@ -158,7 +161,6 @@ class Stupebrett:
         h = L / n
 
         if (L - person_bredde) <= x <= L:  # x er under personen, så vi hensyntar personens vekt
-            return -g * (person_vekt / person_bredde) * h # Kraft personen utøver per meter, ganger segmentlengden.
+            return -g * (person_vekt / person_bredde)  # Kraft personen utøver per meter.
         else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
             return 0
-
