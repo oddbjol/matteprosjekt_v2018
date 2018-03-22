@@ -1,11 +1,24 @@
 from Stupebrett import Stupebrett
 import numpy as np
 from numpy import linalg as la
+import math
 
 stupebrett = Stupebrett()
 
 #Skal sammenligne svaret i oppgave 3 (yc med n= 20) MED Ye (n=20)
 # Skal også finne foroverfeilen ||Yc - ye||
+
+def printVectorInbase2(vector):
+    mystr = "[ "
+    for i in range(vector.size):
+        mantissa, exp = math.frexp(vector[i])
+        mystr += str(mantissa) + "*2^" + str(exp) + "  "
+    mystr += " ]"
+    print(mystr)
+
+def printNumberInBase2(number):
+    mantissa, exp = math.frexp(number)
+    print(str(mantissa) + "*2^" + str(exp))
 
 
 def main():
@@ -22,78 +35,17 @@ def main():
     Ye = stupebrett.fasit_y(n)
     print("Ye-vektor med n=20 for denne oppgaven: ", Ye)
 
-    diff = abs(Ye - Yc)
-    print("Differansen mellom Ye og Yc vektor med n=20: ", diff)
+    diff = Ye - Yc
 
-    print()
-    print()
-    print()
+    print("Differansen mellom Ye og Yc vektor med base 10: ", diff)
 
-
-    # Oppgave 4c
-    # y''''(c) = (1/h^4) * AYe
-
-    A = stupebrett.lagA(n)
-    AYvector = np.dot(A.toarray(), Ye)
-    Yc_fourthDerivative = AYvector/ h**4
-
-    print("The Ye vector: ", Ye)
-    print("The A matrix: ", A)
-    print("Yc fourthDerivative: ", Yc_fourthDerivative)
-
-    # Oppgave 4d
-    # y''''(e) = (b/h^4)
-    # Foroverfeil = ||Ye - Yc|| 1-norm
-    # Relativ foroverfeil = (||Ye - Yc|| 1-norm) / ||Ye ||
-    b_vector = stupebrett.lagB(n)
-    Ye_fourthDerivative = b_vector/ h**4
-    print("The b-vector: ", b_vector)
-    print("Ye fourthDerivative: ", Ye_fourthDerivative)
-
-    #forwardError = la.norm((Ye_fourthDerivative - Yc_fourthDerivative), ord=1)
-    #print("Forward error with norm 1: ", forwardError)
-
-    #relativeForwardError = la.norm((forwardError/ Ye_fourthDerivative), ord=1)
-    #print("Relative forvarderror with norm 1: ", relativeForwardError)
-
-    forwardErrorWithInfNorm = la.norm((Ye_fourthDerivative - Yc_fourthDerivative), np.inf)
-    print("Forward error with infinity norm: ",forwardErrorWithInfNorm)
-
-    relativeForwardErrorWithInfNorm = la.norm((forwardErrorWithInfNorm/Ye_fourthDerivative), np.inf)
-    print("Relative forward error with infinity norm:", relativeForwardErrorWithInfNorm)
-
-    # Skal Anta Relativ bakoverfeil er Epsilon - mach = 2^-52
-    # Skal regne ut feilforstørring og sammenenlign med kondisjonstallet til A
-    # Hva ser jeg???
-
-    errorMagnificationFactor = relativeForwardErrorWithInfNorm/ 2**-52
-    print("Feilforstørring: ")
-    print("The error magnification factor: ", errorMagnificationFactor)
-    #b = A.reshape(10,10)
-    #print(b)
-    A = A.toarray()
-    conditionNumberOfA = la.cond(A)
-    print("Conditionnumber of A: ", conditionNumberOfA)
+    print("Differansen mellom Ye og Yc-vektor med base 2: ")
+    printVectorInbase2(diff)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    forwardError = la.norm((diff), ord=1)
+    print("Differansen mellom Ye og Yc-vektor med base 2 og enernormen: ")
+    printNumberInBase2(forwardError)
 
 
 
