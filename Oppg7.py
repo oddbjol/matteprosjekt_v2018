@@ -45,6 +45,10 @@ def main():
     print(20 * 2**lavest_feil_index)
     print(numerisk_svar[lavest_feil_index], "meter forflytning i L")
 
+    print(('n' + "\t" + 'numerisk svar' + "\t" + 'feil').expandtabs(30))
+    for i in range(11 + 1):
+        print((str(x[i]) + "\t" + str(numerisk_svar[i]) + "\t" + str(feil[i])).expandtabs(30))
+
     plt.title("Feil")
     plt.loglog(x, feil, marker='o', markersize=4, label='Feil', basex=2)
     plt.loglog(x, kondA*EPS, marker='o', markersize=4, label='Kond(A)*EPS', basex=2)
