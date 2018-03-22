@@ -20,7 +20,7 @@ def main():
         #x[i] = n
         feil_i_L = np.abs(brett.fasit_y(n) - brett.finn_y(n))[n - 1]
         kondisjonsTallA = np.linalg.cond(brett.lagA(n).toarray())
-        print(n, feil_i_L, "\t", "condition", kondisjonsTallA)
+        print(n, feil_i_L, "\t", kondisjonsTallA)
 
 
         #print(i, feil_i_L)
