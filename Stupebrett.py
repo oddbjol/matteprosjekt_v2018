@@ -161,6 +161,6 @@ class Stupebrett:
         h = L / n
 
         if (L - person_bredde) <= x <= L:  # x er under personen, så vi hensyntar personens vekt
-            return -g * (person_vekt / person_bredde) * h  # Kraft personen utøver per meter, ganger segmentlengden.
+            return -g * (person_vekt / person_bredde)  # Kraft personen utøver per meter.
         else:  # x er innenfor området som personen står på, anta 0 kraft nedover fra personen.
             return 0
