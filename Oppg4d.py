@@ -21,20 +21,22 @@ def main():
     # Relativ foroverfeil = (||Ye - Yc|| 1-norm) / ||Ye ||
     Ye_vector = stupebrett.fasit_y(n)
     A = stupebrett.lagA(n)
-    AYvector = np.dot(A.toarray(), Ye_vector)
-    Yc_fourthDerivative = AYvector/ h**4
+    AYevector = np.dot(A.toarray(), Ye_vector)
+    Yc_fourthDerivative = AYevector/ h**4 # Numerisk fjerdederiverte
     b_vector = stupebrett.lagB(n)
-    Ye_fourthDerivative = b_vector/ h**4
+    Ye_fourthDerivative = b_vector/ h**4 # Eksakte fjerdederiverte
     print("Resultater fra Oppgave 4 d")
     print("b-vektoren: ", b_vector, sep="\n")
     print()
-    print("Ye-fjerderivert: ", Ye_fourthDerivative, sep="\n")
+    print("Yc_fjerdeDerivert", Yc_fourthDerivative, sep="\n")
+    print()
+    print("Ye-fjerdeDerivert: ", Ye_fourthDerivative, sep="\n")
 
     print()
     forwardErrorWithInfNorm = la.norm((Ye_fourthDerivative - Yc_fourthDerivative), np.inf)
     print("Foroverfeil med uenendelignorm: ",forwardErrorWithInfNorm)
     print()
-    relativeForwardErrorWithInfNorm = la.norm((forwardErrorWithInfNorm/Ye_fourthDerivative), np.inf)
+    relativeForwardErrorWithInfNorm = la.norm((forwardErrorWithInfNorm/ Ye_fourthDerivative), np.inf)
     print("Relativ foroverfeil med uendelignorm:", relativeForwardErrorWithInfNorm)
 
     # Skal Anta Relativ bakoverfeil er Epsilon - mach = 2^-52

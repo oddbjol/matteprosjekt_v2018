@@ -19,12 +19,14 @@ def main():
 
     AYe_vector = np.dot(A.toarray(), Ye_vector)
     Yc_fourthDerivative = AYe_vector/ h**4
+
     print("Resultater fra Oppgave 4 c")
     print()
     print("Ye-vektoren: ", Ye_vector, sep="\n")
     print()
     #print("A matrisen: ", A)
     print("Yc-vektor fjerdederivert: ", Yc_fourthDerivative, sep="\n")
+
 
 
 
