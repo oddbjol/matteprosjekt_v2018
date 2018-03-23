@@ -29,6 +29,7 @@ def main():
 
     # Finner Yc-vetoren med n = 20 fra oppgave 3
     Yc = stupebrett.finn_y(n)
+    print("Resultater fra Oppgave 4 e")
     print("Yc-vektor for stupebrett med n=20: ", Yc)
 
     # Finner Ye-vektoren med n = 20 for denne oppgaven.

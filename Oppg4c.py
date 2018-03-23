@@ -17,11 +17,13 @@ def main():
     Ye_vector = stupebrett.fasit_y(n)
     A = stupebrett.lagA(n)
 
-    AYvector = np.dot(A.toarray(), Ye_vector)
-    Yc_fourthDerivative = AYvector/ h**4
-
+    AYe_vector = np.dot(A.toarray(), Ye_vector)
+    Yc_fourthDerivative = AYe_vector/ h**4
+    print("Resultater fra Oppgave 4 c")
+    print()
     print("Ye-vektoren: ", Ye_vector, sep="\n")
-    print("A matrisen: ", A)
+    print()
+    #print("A matrisen: ", A)
     print("Yc-vektor fjerdederivert: ", Yc_fourthDerivative, sep="\n")
 
 

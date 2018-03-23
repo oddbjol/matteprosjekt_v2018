@@ -25,7 +25,8 @@ def main():
     Yc_fourthDerivative = AYvector/ h**4
     b_vector = stupebrett.lagB(n)
     Ye_fourthDerivative = b_vector/ h**4
-    print("The b-vektoren: ", b_vector, sep="\n")
+    print("Resultater fra Oppgave 4 d")
+    print("b-vektoren: ", b_vector, sep="\n")
     print()
     print("Ye-fjerderivert: ", Ye_fourthDerivative, sep="\n")
 
