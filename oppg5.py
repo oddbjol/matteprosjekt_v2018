@@ -21,7 +21,7 @@ def pointOferror():
         feil_i_L = np.abs(fasit - kalkulering)
 
         for i in range(0, 11):
-            print(int(x[i]), '\t', kalkulering[i], '\t', fasit[i], '\t', feil_i_L[i])
+            print(int(x[i]), '\t',"kaluering", kalkulering[i], '\t',"fasit", fasit[i], '\t',"feil", feil_i_L[i])
 
 
 def plot_kondisjonsTallA():
@@ -46,10 +46,13 @@ def plot_kondisjonsTallA():
     plt.show()
 
 
-print(plot_kondisjonsTallA())
-
+#print(plot_kondisjonsTallA())
 #print('n\tkondisjonsA\t\t\tfasit\t\t\tfeil')
-#pointOferror()
+pointOferror()
+
+
+
+
 
 
     # feil_i_L = np.zeros(12)
