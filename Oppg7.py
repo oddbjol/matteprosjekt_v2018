@@ -49,15 +49,6 @@ def main():
     for i in range(11):
         print((str(x[i]) + "\t" + str(numerisk_svar[i]) + "\t" + str(feil[i])).expandtabs(30))
 
-    plt.title("Feil")
-    plt.loglog(x, feil, marker='o', markersize=4, label='Feil', basex=2)
-    plt.loglog(x, kondA*EPS, marker='o', markersize=4, label='Kond(A)*EPS', basex=2)
-    plt.loglog(x, teoretisk_feil, marker='o', markersize=4, label='Teoretisk feil', basex=2)
-    plt.loglog(x, -numerisk_svar, marker='o', markersize=4, label='numerisk svar i L', basex=2)
-
-    plt.legend()
-    plt.show()
-
 
 if __name__ == '__main__':
     main()
